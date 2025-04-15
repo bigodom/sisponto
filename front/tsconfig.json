@@ -1,4 +1,12 @@
 {
+  "compilerOptions": {
+    "jsx": "react-jsx", // ou "react" em versões mais antigas
+    "module": "esnext",
+    "target": "es6",
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

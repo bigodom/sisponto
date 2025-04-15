@@ -4,7 +4,12 @@ export const getAllPontos = async (req, res) => {
     /*  #swagger.tags = ['Ponto']
     #swagger.description = 'Endpoint to get all pontos.' */
     try {
-        const pontos = await prisma.ponto.findMany();
+        const pontos = await prisma.ponto.findMany({
+            include: {
+              funcionario: true,
+            },
+          });
+          
         res.json(pontos);
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
@@ -12,31 +17,33 @@ export const getAllPontos = async (req, res) => {
 }
 
 export const createPonto = async (req, res) => {
-    /*  #swagger.tags = ['Ponto']
-    #swagger.description = 'Endpoint to create ponto.' */
-    const { funcionarioId, data, entrada, saida } = req.body;
+    const { usuario, dataInicio, dataFim, idFuncionario } = req.body;
 
     try {
-        // Verificação se o funcionário existe
         const funcionario = await prisma.funcionario.findUnique({
-            where: { id: funcionarioId },
+            where: { id: idFuncionario },
         });
 
         if (!funcionario) {
             return res.status(400).json({ error: 'Funcionário não encontrado' });
         }
 
-        // Criação do ponto
         const ponto = await prisma.ponto.create({
-            data: { funcionarioId, data, entrada, saida },
+            data: {
+                usuario,
+                dataInicio: new Date(dataInicio),
+                dataFim: new Date(dataFim),
+                idFuncionario,
+            },
         });
 
         res.status(201).json(ponto);
     } catch (error) {
-        // Tratamento de outros erros
+        console.error(error);
         res.status(500).json({ error: 'Erro no servidor' });
     }
-}
+};
+
 
 export const getPontoById = async (req, res) => {
     /*  #swagger.tags = ['Ponto']
@@ -58,13 +65,10 @@ export const getPontoById = async (req, res) => {
 }
 
 export const updatePonto = async (req, res) => {
-    /*  #swagger.tags = ['Ponto']
-    #swagger.description = 'Endpoint to update ponto.' */
     const { id } = req.params;
-    const { funcionarioId, data, entrada, saida } = req.body;
+    const { usuario, dataInicio, dataFim, idFuncionario } = req.body;
 
     try {
-        // Verificação se o ponto existe
         const ponto = await prisma.ponto.findUnique({
             where: { id: Number(id) },
         });
@@ -73,17 +77,23 @@ export const updatePonto = async (req, res) => {
             return res.status(404).json({ error: 'Ponto não encontrado' });
         }
 
-        // Atualização do ponto
         const updatedPonto = await prisma.ponto.update({
             where: { id: Number(id) },
-            data: { funcionarioId, data, entrada, saida },
+            data: {
+                usuario,
+                dataInicio: new Date(dataInicio),
+                dataFim: new Date(dataFim),
+                idFuncionario,
+            },
         });
 
         res.json(updatedPonto);
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error(error);
+        res.status(500).json({ error: 'Erro no servidor' });
     }
-}
+};
+
 
 export const deletePonto = async (req, res) => {
     /*  #swagger.tags = ['Ponto']

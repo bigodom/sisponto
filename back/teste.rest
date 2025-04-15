@@ -1,0 +1,49 @@
+###
+GET http://192.168.11.234:3013/funcionario
+Content-Type: application/json
+
+
+###
+POST http://192.168.11.234:3013/funcionario
+Content-Type: application/json
+
+{
+  "chapa": 123,
+  "nome": "João da Silva",
+  "departamento": "TI",
+  "funcao": "Desenvolvedor",
+  "coligada": 1,
+  "desligado": false
+}
+
+
+###
+GET http://192.168.11.234:3013/ponto
+Content-Type: application/json
+
+###
+POST http://192.168.11.234:3013/ponto
+Content-Type: application/json
+
+{
+  "usuario": "João da Silva",
+  "dataInicio": "2023-10-01T00:00:00.000Z",
+  "dataFim": "2023-10-31T23:59:59.000Z",
+  "idFuncionario": 1
+}
+
+###
+GET http://192.168.11.234:3013/user
+Content-Type: application/json
+
+###
+POST http://192.168.11.234:3013/user
+Content-Type: application/json
+
+{
+  "name": "André",
+  "email": "andrelucas25111@gmail.com",
+  "login": "andre",
+  "password": "123456",
+  "role": "admin"
+}
