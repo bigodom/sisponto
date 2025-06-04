@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import '../../styles.css';
 
 interface PontoInterface {
@@ -9,26 +9,64 @@ interface PontoInterface {
   dataInicio: string;
   dataFim: string;
   funcionario: {
+    id: number;
     nome: string;
   };
 }
 
 const ListPonto: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [pontos, setPontos] = useState<PontoInterface[]>([]);
-  const [search, setSearch] = useState<string>('');
+  const [searchFuncionario, setSearchFuncionario] = useState<string>('');
+  const [searchUsuario, setSearchUsuario] = useState<string>('');
   const [sortField, setSortField] = useState<keyof PontoInterface | ''>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [funcionarioNome, setFuncionarioNome] = useState<string>('');
+  const [usuarioLogado, setUsuarioLogado] = useState<string>('');
 
   useEffect(() => {
-    api.get<PontoInterface[]>('/ponto').then(response => {
-      setPontos(response.data);
-    });
-  }, []);
+    // Buscar usuário logado do localStorage
+    const nome = localStorage.getItem('name');
+    if (nome) {
+      setUsuarioLogado(nome);
+    }
 
-  const handleDeletePonto = async (id: number) => {
+    if (id) {
+      // Se tiver ID, busca pontos do funcionário específico
+      api.get<PontoInterface[]>(`/ponto/funcionario/${id}`).then(response => {
+        setPontos(response.data);
+        if (response.data.length > 0) {
+          setFuncionarioNome(response.data[0].funcionario.nome);
+        }
+      });
+    } else {
+      // Se não tiver ID, busca todos os pontos
+      api.get<PontoInterface[]>('/ponto').then(response => {
+        setPontos(response.data);
+      });
+    }
+  }, [id]);
+
+  const handleDeletePonto = async (ponto: PontoInterface) => {
+    if (!usuarioLogado) {
+      alert('Usuário não encontrado. Por favor, faça login novamente.');
+      return;
+    }
+
+    if (ponto.usuario !== usuarioLogado) {
+      alert('Você não tem permissão para excluir este ponto. Apenas o usuário que criou pode excluí-lo.');
+      return;
+    }
+
     if (!window.confirm("Deseja excluir este ponto?")) return;
-    await api.delete(`/ponto/${id}`);
-    setPontos(p => p.filter(x => x.id !== id));
+    
+    try {
+      await api.delete(`/ponto/${ponto.id}`);
+      setPontos(p => p.filter(x => x.id !== ponto.id));
+    } catch (error) {
+      alert('Erro ao excluir ponto!');
+      console.error(error);
+    }
   };
 
   const handleSort = (field: keyof PontoInterface) => {
@@ -38,16 +76,10 @@ const ListPonto: React.FC = () => {
   };
 
   const filtered = pontos.filter(p => {
-    const combined = `
-      ${p.id}
-      ${p.usuario}
-      ${p.funcionario.nome}
-      ${new Date(p.dataInicio).toLocaleString()}
-      ${new Date(p.dataFim).toLocaleString()}
-    `.toLowerCase();
-    return combined.includes(search.toLowerCase());
+    const funcionarioMatch = p.funcionario.nome.toLowerCase().includes(searchFuncionario.toLowerCase());
+    const usuarioMatch = p.usuario.toLowerCase().includes(searchUsuario.toLowerCase());
+    return funcionarioMatch && usuarioMatch;
   });
-
 
   const sorted = sortField
     ? [...filtered].sort((a, b) => {
@@ -67,23 +99,40 @@ const ListPonto: React.FC = () => {
   return (
     <div className="container">
       <div className="row g-3 mt-3 border rounded p-4 m-0">
-        <h1 className="text-center m-0">Lista de Pontos</h1>
+        <h1 className="text-center m-0">
+          {id ? `Pontos do Funcionário: ${funcionarioNome}` : 'Lista de Pontos'}
+        </h1>
 
-        <div className="col-sm-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Buscar por usuário"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className="col-sm-12">
+          <div className="row">
+            <div className="col-sm-6 mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar por funcionário"
+                value={searchFuncionario}
+                onChange={(e) => setSearchFuncionario(e.target.value)}
+              />
+            </div>
+            <div className="col-sm-6 mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar por usuário"
+                value={searchUsuario}
+                onChange={(e) => setSearchUsuario(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="col-sm-8 d-flex justify-content-end gap-3">
-          <Link to="/ponto/create" className="btn btn-success">
-            Inserir
-          </Link>
-          <Link to="/" className="btn btn-secondary">
+        <div className="col-sm-12 d-flex justify-content-end gap-3">
+          {!id && (
+            <Link to="/ponto/create" className="btn btn-success">
+              Inserir
+            </Link>
+          )}
+          <Link to={id ? "/funcionario" : "/"} className="btn btn-secondary">
             Voltar
           </Link>
         </div>
@@ -116,13 +165,18 @@ const ListPonto: React.FC = () => {
                   <td>{p.id}</td>
                   <td>{p.usuario}</td>
                   <td>{p.funcionario.nome}</td>
-                  <td>{new Date(p.dataInicio).toLocaleString()}</td>
-                  <td>{new Date(p.dataFim).toLocaleString()}</td>
+                  <td>{new Date(p.dataInicio).toLocaleDateString()}</td>
+                  <td>{new Date(p.dataFim).toLocaleDateString()}</td>
                   <td>
                     <Link to={`/ponto/update/${p.id}`} className="btn btn-primary me-2">
                       Atualizar
                     </Link>
-                    <button onClick={() => handleDeletePonto(p.id)} className="btn btn-danger">
+                    <button 
+                      onClick={() => handleDeletePonto(p)} 
+                      className="btn btn-danger"
+                      disabled={p.usuario !== usuarioLogado}
+                      title={p.usuario !== usuarioLogado ? "Apenas o usuário que criou pode excluir" : "Excluir ponto"}
+                    >
                       Excluir
                     </button>
                   </td>

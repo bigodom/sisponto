@@ -10,6 +10,8 @@ import UpdateFuncionario from './components/funcionario/FuncionarioUpdate';
 import ListPonto from './components/ponto/PontoList';
 import CreatePonto from './components/ponto/PontoCreate';
 import UpdatePonto from './components/ponto/PontoUpdate';
+import PontoFuncionarioCreate from './components/ponto/PontoFuncionarioCreate';
+import PontoFuncionarioList from './components/ponto/PontoFuncionarioList';
 
 type PrivateRouteProps = {
   children: React.ReactNode;
@@ -64,18 +66,26 @@ const AppRoutes: React.FC = () => (
       }
     />
     <Route
-      path="/ponto/create"
-      element={
-        <PrivateRoute>
-          <CreatePonto />
-        </PrivateRoute>
-      }
-    />
-    <Route
       path="/ponto/update/:id"
       element={
         <PrivateRoute>
           <UpdatePonto />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/ponto/create/funcionario/:id"
+      element={
+        <PrivateRoute>
+          <PontoFuncionarioCreate />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/ponto/funcionario/:id"
+      element={
+        <PrivateRoute>
+          <PontoFuncionarioList />
         </PrivateRoute>
       }
     />

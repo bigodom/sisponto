@@ -11,6 +11,7 @@ const UpdateFuncionario = () => {
   const [departamento, setDepartamento] = useState('');
   const [funcao, setFuncao] = useState('');
   const [desligado, setDesligado] = useState(false);
+  const [loja, setLoja] = useState<number | ''>('');
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -22,6 +23,7 @@ const UpdateFuncionario = () => {
       setDepartamento(response.data.departamento);
       setFuncao(response.data.funcao);
       setDesligado(response.data.desligado);
+      setLoja(response.data.loja);
     })
   }, [id]);
 
@@ -34,7 +36,8 @@ const UpdateFuncionario = () => {
       coligada: Number(coligada),
       departamento,
       funcao,
-      desligado
+      desligado,
+      loja: Number(loja),
     };
     try {
       await api.post('/funcionario', data);
@@ -132,6 +135,18 @@ const UpdateFuncionario = () => {
               />
               <label htmlFor="desligado" className="form-check-label">Desligado</label>
             </div>
+          </div>
+          <div className="col-sm-3 mb-3">
+            <label htmlFor="loja" className="form-label">Loja:</label>
+            <input 
+              type="number" 
+              id="loja" 
+              name="loja"
+              className="form-control"
+              value={loja} 
+              onChange={e => setLoja(Number(e.target.value))} 
+              required
+            />
           </div>
           <div className="col-sm-12 d-flex gap-3">
             <button type="submit" className="btn btn-primary">Atualizar</button>

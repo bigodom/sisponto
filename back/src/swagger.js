@@ -8,8 +8,22 @@ const doc = {
     },
     servers: [
       {
-        url: "http://192.168.11.95:3013",
+        url: "http://192.168.11.95:3001",
         description: "Development server"
+      }
+    ],
+    tags: [
+      {
+        name: "User",
+        description: "User related endpoints"
+      },
+      {
+        name: "Ponto",
+        description: "Ponto related endpoints"
+      },
+      {
+        name: "Funcionario",
+        description: "Funcionario related endpoints"
       }
     ],
     schemes: ["http"],

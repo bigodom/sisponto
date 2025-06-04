@@ -7,8 +7,22 @@
   },
   "servers": [
     {
-      "url": "http://192.168.11.95:3013",
+      "url": "http://192.168.11.95:3001",
       "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "User",
+      "description": "User related endpoints"
+    },
+    {
+      "name": "Ponto",
+      "description": "Ponto related endpoints"
+    },
+    {
+      "name": "Funcionario",
+      "description": "Funcionario related endpoints"
     }
   ],
   "paths": {
@@ -31,13 +45,22 @@
         "tags": [
           "User"
         ],
-        "description": "Endpoint to create user.",
+        "description": "Endpoint to create user or login.",
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
             "description": "Created"
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -180,7 +203,7 @@
     "/funcionario": {
       "get": {
         "tags": [
-          "Funcionário"
+          "Funcionario"
         ],
         "description": "Endpoint to get all funcionarios.",
         "responses": {
@@ -194,7 +217,7 @@
       },
       "post": {
         "tags": [
-          "Funcionário"
+          "Funcionario"
         ],
         "description": "Endpoint to create funcionario.",
         "responses": {
@@ -225,6 +248,9 @@
                   },
                   "coligada": {
                     "example": "any"
+                  },
+                  "desligado": {
+                    "example": "any"
                   }
                 }
               }
@@ -236,7 +262,7 @@
     "/funcionario/{id}": {
       "get": {
         "tags": [
-          "Funcionário"
+          "Funcionario"
         ],
         "description": "Endpoint to get funcionario by id.",
         "parameters": [
@@ -263,7 +289,7 @@
       },
       "put": {
         "tags": [
-          "Funcionário"
+          "Funcionario"
         ],
         "description": "Endpoint to update funcionario.",
         "parameters": [
@@ -313,7 +339,7 @@
       },
       "delete": {
         "tags": [
-          "Funcionário"
+          "Funcionario"
         ],
         "description": "Endpoint to delete funcionario.",
         "parameters": [
@@ -373,16 +399,16 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "funcionarioId": {
+                  "usuario": {
                     "example": "any"
                   },
-                  "data": {
+                  "dataInicio": {
                     "example": "any"
                   },
-                  "entrada": {
+                  "dataFim": {
                     "example": "any"
                   },
-                  "saida": {
+                  "idFuncionario": {
                     "example": "any"
                   }
                 }
@@ -393,6 +419,33 @@
       }
     },
     "/ponto/{id}": {
+      "get": {
+        "tags": [
+          "Ponto"
+        ],
+        "description": "Endpoint to get ponto by id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
       "put": {
         "tags": [
           "Ponto"
@@ -425,16 +478,19 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "funcionarioId": {
+                  "usuario": {
                     "example": "any"
                   },
-                  "data": {
+                  "dataInicio": {
                     "example": "any"
                   },
-                  "entrada": {
+                  "dataFim": {
                     "example": "any"
                   },
-                  "saida": {
+                  "idFuncionario": {
+                    "example": "any"
+                  },
+                  "impressoes": {
                     "example": "any"
                   }
                 }
@@ -461,6 +517,64 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ponto/funcionario/{id}": {
+      "get": {
+        "tags": [
+          "Ponto"
+        ],
+        "description": "Endpoint to get ponto by funcionarioId.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ponto/{id}/incrementar-impressoes": {
+      "put": {
+        "tags": [
+          "Ponto"
+        ],
+        "description": "Endpoint to increment impressoes count.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "404": {
             "description": "Not Found"

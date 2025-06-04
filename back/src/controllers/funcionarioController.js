@@ -1,7 +1,7 @@
 import prisma from "../services/databaseClient.js";
 
 export const getAllFuncionarios = async (req, res) => {
-    /*  #swagger.tags = ['Funcionário']
+    /*  #swagger.tags = ['Funcionario']
     #swagger.description = 'Endpoint to get all funcionarios.' */
     try {
         const funcionarios = await prisma.funcionario.findMany();
@@ -12,14 +12,14 @@ export const getAllFuncionarios = async (req, res) => {
 }
 
 export const createFuncionario = async (req, res) => {
-    /*  #swagger.tags = ['Funcionário']
+    /*  #swagger.tags = ['Funcionario']
     #swagger.description = 'Endpoint to create funcionario.' */
-    const { chapa, nome, departamento, funcao, coligada } = req.body;
+    const { chapa, nome, departamento, funcao, coligada, desligado, loja } = req.body;
 
     try {
         // Criação do funcionário
         const funcionario = await prisma.funcionario.create({
-            data: { chapa, nome, departamento, coligada, funcao, desligado: false },
+            data: { chapa, nome, departamento, coligada, funcao, desligado, loja },
         });
 
         res.status(201).json(funcionario);
@@ -30,7 +30,7 @@ export const createFuncionario = async (req, res) => {
 }
 
 export const getFuncionarioById = async (req, res) => {
-    /*  #swagger.tags = ['Funcionário']
+    /*  #swagger.tags = ['Funcionario']
     #swagger.description = 'Endpoint to get funcionario by id.' */
     const { id } = req.params;
     try {
@@ -49,15 +49,15 @@ export const getFuncionarioById = async (req, res) => {
 }
 
 export const updateFuncionario = async (req, res) => {
-    /*  #swagger.tags = ['Funcionário']
+    /*  #swagger.tags = ['Funcionario']
     #swagger.description = 'Endpoint to update funcionario.' */
     const { id } = req.params;
-    const { chapa, nome, departamento, cargo, coligada } = req.body;
+    const { chapa, nome, departamento, cargo, coligada, loja } = req.body;
 
     try {
         const funcionario = await prisma.funcionario.update({
             where: { id: Number(id) },
-            data: { chapa, nome, departamento, cargo, coligada },
+            data: { chapa, nome, departamento, cargo, coligada, loja },
         });
 
         res.json(funcionario);
@@ -67,7 +67,7 @@ export const updateFuncionario = async (req, res) => {
 }
 
 export const deleteFuncionario = async (req, res) => {
-    /*  #swagger.tags = ['Funcionário']
+    /*  #swagger.tags = ['Funcionario']
     #swagger.description = 'Endpoint to delete funcionario.' */
     const { id } = req.params;
     try {

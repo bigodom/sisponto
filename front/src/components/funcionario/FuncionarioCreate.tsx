@@ -11,22 +11,25 @@ const CreateFuncionario = () => {
   const [departamento, setDepartamento] = useState('');
   const [funcao, setFuncao] = useState('');
   const [desligado, setDesligado] = useState(false);
+  const [loja, setLoja] = useState<number | ''>('');
   const navigate = useNavigate();
 
   const handleNewFuncionario = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const data = {
-      nome,
+      nome: nome.toUpperCase(),
       chapa: Number(chapa),
       coligada: Number(coligada),
-      departamento,
-      funcao,
-      desligado
+      departamento: departamento.toUpperCase(),
+      funcao: funcao.toUpperCase(),
+      desligado,
+      loja: Number(loja),
     };
 
     try {
       await api.post('/funcionario', data);
+      console.log(data);
       alert('Funcionário cadastrado com sucesso!');
       navigate('/funcionario');
     } catch (error) {
@@ -75,6 +78,17 @@ const CreateFuncionario = () => {
               className="form-control"
               value={coligada} 
               onChange={e => setColigada(Number(e.target.value))} 
+              required 
+            />
+          </div>
+          <div className="col-sm-3 mb-3">
+            <label htmlFor="loja" className="form-label">Loja:</label>
+            <input 
+              type="number" 
+              id="loja" 
+              className="form-control"
+              value={loja} 
+              onChange={e => setLoja(Number(e.target.value))} 
               required 
             />
           </div>
