@@ -31,6 +31,7 @@ const PontoFuncionarioList: React.FC = () => {
   const [funcionario, setFuncionario] = useState<Funcionario | null>(null);
   const [pdfBase64, setPdfBase64] = useState<string>('');
   const iframeRef = useRef<IframePrintHandle>(null);
+  const [isPrinting, setIsPrinting] = useState<boolean>(false);
 
   useEffect(() => {
     api.get(`/funcionario/${id}`).then(res => setFuncionario(res.data));
@@ -194,6 +195,7 @@ const PontoFuncionarioList: React.FC = () => {
 
   const handlePrint = async (ponto: Ponto) => {
     try {
+      setIsPrinting(true);
       const excelBlob = await gerarExcel(ponto);
       const dataInicial = formatarData(ponto.dataInicio);
 
@@ -221,6 +223,8 @@ const PontoFuncionarioList: React.FC = () => {
     } catch (err) {
       console.error("Erro ao gerar PDF:", err);
       alert("Erro ao gerar o PDF. Por favor, tente novamente.");
+    } finally {
+      setIsPrinting(false);
     }
   };
 
@@ -240,6 +244,14 @@ const PontoFuncionarioList: React.FC = () => {
       </div>
 
       <div className="mt-3 border rounded p-3">
+        {isPrinting && (
+          <div className="alert alert-info py-2 mb-3" role="alert">
+            <div className="d-flex align-items-center gap-2">
+              <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span>Imprimindo a folha de ponto... Aguarde.</span>
+            </div>
+          </div>
+        )}
         <div style={{ height: "600px" }}>
           <div className="h-100 overflow-y-auto">
             <table className="table table-striped table-bordered table-hover m-0">
@@ -264,8 +276,15 @@ const PontoFuncionarioList: React.FC = () => {
                         <button onClick={() => handleDownload(ponto)} className="btn btn-primary btn-sm">
                           Baixar Folha
                         </button>
-                        <button onClick={() => handlePrint(ponto)} className="btn btn-secondary btn-sm ms-2">
-                          Imprimir
+                        <button onClick={() => handlePrint(ponto)} className="btn btn-secondary btn-sm ms-2" disabled={isPrinting}>
+                          {isPrinting ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                              Imprimindo...
+                            </>
+                          ) : (
+                            'Imprimir'
+                          )}
                         </button>
                       </div>
                     </td>
