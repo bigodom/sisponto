@@ -12,6 +12,8 @@ const UpdateFuncionario = () => {
   const [funcao, setFuncao] = useState('');
   const [desligado, setDesligado] = useState(false);
   const [loja, setLoja] = useState<number | ''>('');
+  const [cpf, setCpf] = useState('');
+  const [dataAdmissao, setDataAdmissao] = useState('');
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -24,6 +26,8 @@ const UpdateFuncionario = () => {
       setFuncao(response.data.funcao);
       setDesligado(response.data.desligado);
       setLoja(response.data.loja);
+      setCpf(response.data.cpf);
+      setDataAdmissao(response.data.dataAdmissao);
     })
   }, [id]);
 
@@ -32,15 +36,17 @@ const UpdateFuncionario = () => {
     const data = {
       id: parseInt(String(id)),
       nome,
+      cpf,
       chapa: Number(chapa),
       coligada: Number(coligada),
       departamento,
       funcao,
       desligado,
       loja: Number(loja),
+      dataAdmissao
     };
     try {
-      await api.post('/funcionario', data);
+      await api.put(`/funcionario/${id}`, data);
       alert('Funcionário atualizado com sucesso!');
       navigate('/funcionario');
     } catch (error: unknown) {

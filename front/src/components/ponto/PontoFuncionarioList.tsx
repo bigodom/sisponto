@@ -18,8 +18,11 @@ interface Funcionario {
   id: number;
   nome: string;
   chapa: number;
+  funcao: string;
+  dataAdmissao: string;
   departamento: string;
   loja: number;
+  coligada: number;
 }
 
 const PontoFuncionarioList: React.FC = () => {
@@ -64,60 +67,59 @@ const PontoFuncionarioList: React.FC = () => {
     const nomesDias = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
 
     worksheet.getCell("D4").value = funcionario?.nome;
-    worksheet.getCell("D6").value = `${dataInicialStr} a ${dataFinalStr}`;
-    worksheet.getCell("D8").value = funcionario?.departamento;
+    worksheet.getCell("D5").value = funcionario?.funcao;
+    worksheet.getCell("D6").value = funcionario?.dataAdmissao;
+    worksheet.getCell("G6").value = funcionario?.chapa;
+    worksheet.getCell("D7").value = "44 horas semanais";
+    worksheet.getCell("D8").value = `${dataInicialStr} a ${dataFinalStr}`;
+    worksheet.getCell("D9").value = funcionario?.departamento;
 
     // Add store-specific information
-    if (funcionario?.loja === 1) {
-      worksheet.getCell("H3").value = "18.107.045/0001-25";
-      worksheet.getCell("H4").value = "ORGANIZAÇAO DE CERAIS MONLEVADE LTDA";
-      worksheet.getCell("H5").value = "AVENIDA GETULIO VARGAS 4164";
-      worksheet.getCell("H6").value = "CARNEIRINHOS - 35930002";
-    } else if (funcionario?.loja === 2) {
-      worksheet.getCell("H3").value = "18.107.045/0002-06";
-      worksheet.getCell("H4").value = "ORGANIZAÇAO DE CERAIS MONLEVADE LTDA";
-      worksheet.getCell("H5").value = "AVENIDA GENTIL BICALHO 340";
-      worksheet.getCell("H6").value = "CARNEIRINHOS - 35930478";
-    } else if (funcionario?.loja === 3) {
-      worksheet.getCell("H3").value = "07.550.586/0001-07";
-      worksheet.getCell("H4").value = "HIPERLANCHES LTDA";
-      worksheet.getCell("H5").value = "AVENIDA GENTIL BICALHO 340 LJ01";
-      worksheet.getCell("H6").value = "CARNEIRINHOS - 35930478";
-    } else if (funcionario?.loja === 5) {
-      worksheet.getCell("H3").value = "14.652.214/0001-57";
-      worksheet.getCell("H4").value = "CORREIA LEITE IMOVEIS LTDA";
-      worksheet.getCell("H5").value = "AVENIDA GETIL BICALHO 340 LOJA 05";
-      worksheet.getCell("H6").value = "CARNEIRINHOS - 35930478";
-    } else if (funcionario?.loja === 7) {
-      worksheet.getCell("H3").value = "15.749.220/0001-90";
-      worksheet.getCell("H4").value = "HEMA LOCAÇÃO LTDA-ME";
-      worksheet.getCell("H5").value = "AVENIDA GENTIL BICALHO 340 LOJA 04";
-      worksheet.getCell("H6").value = "CARNEIRINHOS - 35930478";
-    } else if (funcionario?.loja === 11) {
-      worksheet.getCell("H3").value = "07.550.586/0002-98";
-      worksheet.getCell("H4").value = "HIPER LANCHES LTDA";
-      worksheet.getCell("H5").value = "AVENIDA WILSON ALVARENGA 700 LOJA 01";
-      worksheet.getCell("H6").value = "CARNEIRINHOS - 35930480";
-    } else if (funcionario?.loja === 12) {
-      worksheet.getCell("H3").value = "18.107.045/0003-97";
-      worksheet.getCell("H4").value = "ORGANIZAÇAO DE CERAIS MONLEVADE";
-      worksheet.getCell("H5").value = "AVENIDA WILSON ALVARENGA 700";
-      worksheet.getCell("H6").value = "CARNEIRINHOS - 35930480";
-    } else if (funcionario?.loja === 13) {
-      worksheet.getCell("H3").value = "55.226.031/0001.57";
-      worksheet.getCell("H4").value = "AGROPACAS LTDA ";
-      worksheet.getCell("H5").value = "RUA CATIRINA N8 ZONA RURAL";
-      worksheet.getCell("H6").value = "35934899";
-    } else if (funcionario?.loja === 14) {
-      worksheet.getCell("H3").value = "55.896.333/0001-32";
-      worksheet.getCell("H4").value = "SANTA LTDA";
-      worksheet.getCell("H5").value = "RUA LUCINDA SOARES DA FONSECA 47";
-      worksheet.getCell("H6").value = "JK - 35930692";
+    if (funcionario?.coligada === 1 && funcionario?.loja === 1) {
+      worksheet.getCell("H4").value = "18.107.045/0001-25";
+      worksheet.getCell("H5").value = "ORGANIZAÇAO DE CERAIS MONLEVADE LTDA";
+      worksheet.getCell("H6").value = "AVENIDA GETULIO VARGAS 4164";
+      worksheet.getCell("H7").value = "CARNEIRINHOS - 35930002";
+    } else if (funcionario?.coligada === 1 && funcionario?.loja === 2) {
+      worksheet.getCell("H4").value = "18.107.045/0002-06";
+      worksheet.getCell("H5").value = "ORGANIZAÇAO DE CERAIS MONLEVADE LTDA";
+      worksheet.getCell("H6").value = "AVENIDA GENTIL BICALHO 340";
+      worksheet.getCell("H7").value = "CARNEIRINHOS - 35930478";
+    } else if (funcionario?.coligada === 1 && funcionario?.loja === 3) {
+      worksheet.getCell("H4").value = "18.107.045/0003-97";
+      worksheet.getCell("H5").value = "ORGANIZAÇAO DE CERAIS MONLEVADE";
+      worksheet.getCell("H6").value = "AVENIDA WILSON ALVARENGA 700";
+      worksheet.getCell("H7").value = "CARNEIRINHOS - 35930480";
+    } else if (funcionario?.coligada === 3 && funcionario?.loja === 1) {
+      worksheet.getCell("H4").value = "14.652.214/0001-57";
+      worksheet.getCell("H5").value = "CORREIA LEITE IMOVEIS LTDA";
+      worksheet.getCell("H6").value = "AVENIDA GETIL BICALHO 340 LOJA 05";
+      worksheet.getCell("H7").value = "CARNEIRINHOS - 35930478";
+    } else if (funcionario?.coligada === 4 && funcionario?.loja === 1) {
+      worksheet.getCell("H4").value = "15.749.220/0001-90";
+      worksheet.getCell("H5").value = "HEMA LOCAÇÃO LTDA-ME";
+      worksheet.getCell("H6").value = "AVENIDA GENTIL BICALHO 340 LOJA 04";
+      worksheet.getCell("H7").value = "CARNEIRINHOS - 35930478";
+    } else if (funcionario?.coligada === 2 && funcionario?.loja === 2) {
+      worksheet.getCell("H4").value = "07.550.586/0002-98";
+      worksheet.getCell("H5").value = "HIPER LANCHES LTDA";
+      worksheet.getCell("H6").value = "AVENIDA WILSON ALVARENGA 700 LOJA 01";
+      worksheet.getCell("H7").value = "CARNEIRINHOS - 35930480";
+    } else if (funcionario?.coligada === 2 && funcionario?.loja === 1) {
+      worksheet.getCell("H4").value = "07.550.586/0001-07";
+      worksheet.getCell("H5").value = "HIPERLANCHES LTDA";
+      worksheet.getCell("H6").value = "AVENIDA GENTIL BICALHO 340 LJ01";
+      worksheet.getCell("H7").value = "CARNEIRINHOS - 35930478";
+    } else if (funcionario?.coligada === 10 && funcionario?.loja === 1) {
+      worksheet.getCell("H4").value = "55.896.333/0001-32";
+      worksheet.getCell("H5").value = "SANTA LTDA";
+      worksheet.getCell("H6").value = "RUA LUCINDA SOARES DA FONSECA 47";
+      worksheet.getCell("H7").value = "JK - 35930692";
     } else {
-      worksheet.getCell("H3").value = "";
       worksheet.getCell("H4").value = "";
       worksheet.getCell("H5").value = "";
       worksheet.getCell("H6").value = "";
+      worksheet.getCell("H7").value = "";
     }
 
     const modelRow = worksheet.getRow(13);
@@ -138,7 +140,7 @@ const PontoFuncionarioList: React.FC = () => {
     let currentDate = new Date(dataInicio);
     let rowIndex = 13;
 
-    while (currentDate <= dataFim && rowIndex <= 43) {
+    while (currentDate <= dataFim && rowIndex <= 44) {
       const dia = currentDate.getDate();
       const nomeDia = nomesDias[currentDate.getDay()];
       const rowStr = `${rowIndex}`;

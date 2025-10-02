@@ -5,6 +5,7 @@ import { AxiosError } from "axios";
 import '../../styles.css';
 
 const CreateFuncionario = () => {
+  const [cpf, setCpf] = useState('');
   const [nome, setNome] = useState('');
   const [chapa, setChapa] = useState<number | ''>('');
   const [coligada, setColigada] = useState<number | ''>('');
@@ -12,6 +13,7 @@ const CreateFuncionario = () => {
   const [funcao, setFuncao] = useState('');
   const [desligado, setDesligado] = useState(false);
   const [loja, setLoja] = useState<number | ''>('');
+  const [dataAdmissao, setDataAdmissao] = useState('');
   const navigate = useNavigate();
 
   const handleNewFuncionario = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -19,17 +21,19 @@ const CreateFuncionario = () => {
 
     const data = {
       nome: nome.toUpperCase(),
+      cpf: cpf,
       chapa: Number(chapa),
       coligada: Number(coligada),
       departamento: departamento.toUpperCase(),
       funcao: funcao.toUpperCase(),
       desligado,
       loja: Number(loja),
+      dataAdmissao,
     };
 
     try {
-      await api.post('/funcionario', data);
       console.log(data);
+      await api.post('/funcionario', data);
       alert('Funcionário cadastrado com sucesso!');
       navigate('/funcionario');
     } catch (error) {
@@ -56,6 +60,17 @@ const CreateFuncionario = () => {
               className="form-control"
               value={nome} 
               onChange={e => setNome(e.target.value)} 
+              required 
+            />
+          </div>
+          <div className="col-sm-3 mb-3">
+            <label htmlFor="cpf" className="form-label">CPF:</label>
+            <input 
+              type="number" 
+              id="cpf" 
+              className="form-control"
+              value={cpf} 
+              onChange={e => setCpf(e.target.value)} 
               required 
             />
           </div>
@@ -111,6 +126,18 @@ const CreateFuncionario = () => {
               className="form-control"
               value={funcao} 
               onChange={e => setFuncao(e.target.value)} 
+              required 
+            />
+          </div>
+          <div className="col-sm-3 mb-3">
+            <label htmlFor="dataAdmissao" className="form-label">Data de Admissão:</label>
+            <input 
+              type="text" 
+              id="dataAdmissao" 
+              className="form-control"
+              placeholder="dd/mm/aaaa"
+              value={dataAdmissao} 
+              onChange={e => setDataAdmissao(e.target.value)} 
               required 
             />
           </div>

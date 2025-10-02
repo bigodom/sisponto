@@ -12,18 +12,35 @@ export interface FuncionarioInterface {
   funcao: string;
   desligado: boolean;
   loja: number;
+  dataAdmissao: string;
 }
 
-const LOJAS: { [key: number]: string } = {
-  1: 'MATRIZ',
-  2: 'HIPER',
-  3: 'HIPERLANCHES',
-  5: 'CORREIA LEITE',
-  7: 'HEMA',
-  11: 'HIPERLANCHES FILIAL',
-  12: 'SUPER',
-  13: 'AGROPACAS',
-  14: 'SANTA LIMPEZA'
+// Mapping loja names by coligada and loja
+const LOJAS_BY_COLIGADA: { [coligada: number]: { [loja: number]: string } } = {
+  1: {
+    1: 'MATRIZ',
+    2: 'HIPER',
+    3: 'SUPER',
+  },
+  2: {
+    1: 'HIPERLANCHES MATRIZ',
+    2: 'HIPERLANCHES FILIAL',
+  },
+  3: {
+    1: 'CORREIA LEITE',
+  },
+  4: {
+    1: 'HEMA LOCAÇÃO',
+  },
+  10: {
+    1: 'SANTA LIMPEZA',
+  }
+};
+
+const getLojaNome = (coligada: number, loja: number): string => {
+  const byColigada = LOJAS_BY_COLIGADA[coligada];
+  if (!byColigada) return 'Loja não encontrada';
+  return byColigada[loja] || 'Loja não encontrada';
 };
 
 const ListFuncionarios: React.FC = () => {
@@ -90,7 +107,7 @@ const ListFuncionarios: React.FC = () => {
   return (
     <div className="container">
       <div className="row g-3 mt-3 border rounded p-4 m-0">
-        <h1 className="text-center m-0">Lista de Funcionários</h1>
+        <h1 className="text-center m-0">Filtros</h1>
         <div className="row g-3">
           <div className="col-sm-4">
             <label htmlFor="nomeFilter" className="form-label">Nome:</label>
@@ -123,9 +140,11 @@ const ListFuncionarios: React.FC = () => {
               onChange={e => setColigadaFilter(e.target.value ? Number(e.target.value) : '')}
             >
               <option value="">Todas</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+              <option value="1">ORGANIZAÇÃO</option>
+              <option value="2">HIPERLANCHES</option>
+              <option value="3">CORREIA LEITE</option>
+              <option value="4">HEMA LOCAÇÃO</option>
+              <option value="10">SANTA LIMPEZA</option>
             </select>
           </div>
           <div className="col-sm-2">
@@ -171,34 +190,50 @@ const ListFuncionarios: React.FC = () => {
               onChange={e => setLojaFilter(e.target.value ? Number(e.target.value) : '')}
             >
               <option value="">Todas</option>
-              {Object.entries(LOJAS).map(([id, nome]) => (
-                <option key={id} value={id}>{id} - {nome}</option>
-              ))}
+              {coligadaFilter && LOJAS_BY_COLIGADA[Number(coligadaFilter)]
+                ? Object.entries(LOJAS_BY_COLIGADA[Number(coligadaFilter)]).map(([id, nome]) => (
+                  <option key={id} value={id}>{id} - {nome}</option>
+                ))
+                : Array.from(
+                  new Set(
+                    Object.values(LOJAS_BY_COLIGADA)
+                      .flatMap(m => Object.keys(m))
+                  )
+                ).sort((a, b) => Number(a) - Number(b)).map(id => (
+                  <option key={id} value={id}>{id}</option>
+                ))
+              }
             </select>
           </div>
-          <div className="col-sm-2">
-            <div className="form-check mt-4">
-              <input
-                type="checkbox"
-                id="desligadoFilter"
-                className="form-check-input"
-                checked={desligadoFilter}
-                onChange={e => setDesligadoFilter(e.target.checked)}
-              />
+          <div className="col-sm-4 align-content-end mb-2 ms-1">
+            <div className="form-check">
               <label htmlFor="desligadoFilter" className="form-check-label">
                 Exibir Desligados
               </label>
+              <input
+                type="checkbox"
+                id="desligadoFilter"
+                className="form-check-input me-2"
+                checked={desligadoFilter}
+                onChange={e => setDesligadoFilter(e.target.checked)}
+              />
+
             </div>
           </div>
-          <div className="col-sm-2">
-          <Link to="/funcionario/create" className="btn btn-success w-100">
+
+        </div>
+        <div className="d-flex align-items-center border p-3 mt-3">
+          <div className="me-3">Criar novo funcionario:</div>
+          <Link to="/funcionario/create" className="btn btn-success m-0">
             Inserir
           </Link>
         </div>
-        </div>
 
       </div>
+      <div className="row g-3 mt-4 p-4 m-0">
 
+        <h1 className="text-center m-0">Lista de Funcionários</h1>
+      </div>
       <div className="mt-3 border rounded p-3">
         <div style={{ height: '600px' }}>
           <div className="h-100 overflow-y-auto">
@@ -225,7 +260,6 @@ const ListFuncionarios: React.FC = () => {
                   </th>
                   <th>Nova Folha</th>
                   <th>Atualizar</th>
-                  <th>Excluir</th>
                 </tr>
               </thead>
               <tbody>
@@ -240,7 +274,7 @@ const ListFuncionarios: React.FC = () => {
                     <td>{f.coligada}</td>
                     <td>{f.departamento}</td>
                     <td>{f.funcao}</td>
-                    <td>{f.loja} - {LOJAS[f.loja] || 'Loja não encontrada'}</td>
+                    <td>{f.loja} - {getLojaNome(f.coligada, f.loja)}</td>
                     <td>
                       <Link
                         to={`/ponto/create/funcionario/${f.id}`}
@@ -258,12 +292,6 @@ const ListFuncionarios: React.FC = () => {
                       </Link>
                     </td>
                     <td>
-                      <button
-                        onClick={() => handleDeleteFuncionario(f.id)}
-                        className="btn btn-danger btn-sm"
-                      >
-                        Excluir
-                      </button>
                     </td>
                   </tr>
                 ))}
@@ -274,16 +302,16 @@ const ListFuncionarios: React.FC = () => {
       </div>
 
       <div className="mt-3 border rounded p-3">
-        <h3 className="mb-3">Importar Funcionários via CSV</h3>
+        <h3 className="mb-3">Importar Funcionários via XLS ou XLSX</h3>
         <div className="row">
           <div className="col-md-6">
             <div className="mb-3">
-              <label htmlFor="csvFile" className="form-label">Selecione o arquivo CSV:</label>
+              <label htmlFor="csvFile" className="form-label">Selecione o arquivo XLS ou XLSX:</label>
               <input
                 type="file"
                 className="form-control"
                 id="csvFile"
-                accept=".csv"
+                accept=".xls,.xlsx"
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
@@ -304,7 +332,7 @@ const ListFuncionarios: React.FC = () => {
                     const updatedFuncionarios = await api.get<FuncionarioInterface[]>('/funcionario');
                     setFuncionarios(updatedFuncionarios.data);
                   } catch (error) {
-                    alert('Erro ao importar arquivo CSV');
+                    alert('Erro ao importar planilha');
                     console.error(error);
                   }
                 }}
@@ -312,7 +340,7 @@ const ListFuncionarios: React.FC = () => {
             </div>
             <div className="alert alert-info">
               <small>
-                O arquivo CSV deve conter as seguintes colunas: cpf, chapa, coligada, loja, nome, departamento, funcao
+                A planilha deve conter as colunas nas posições: A(coligada); C(chapa); J(dataAdmissao); M(nome); T(departamento); Z(loja); AC(cpf); AR(funcao). Ignore a primeira linha (cabeçalho). Separador ';'.
               </small>
             </div>
           </div>

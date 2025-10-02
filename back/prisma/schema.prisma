@@ -23,6 +23,7 @@ model Funcionario {
   departamento String
   funcao       String
   desligado    Boolean
+  dataAdmissao String
   pontos       Ponto[] // Relação com a tabela Ponto
 }
 

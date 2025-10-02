@@ -4,7 +4,9 @@ export const getAllFuncionarios = async (req, res) => {
     /*  #swagger.tags = ['Funcionario']
     #swagger.description = 'Endpoint to get all funcionarios.' */
     try {
-        const funcionarios = await prisma.funcionario.findMany();
+        const funcionarios = await prisma.funcionario.findMany({
+            orderBy: { nome: 'asc' }
+        })
         res.json(funcionarios);
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
@@ -14,12 +16,12 @@ export const getAllFuncionarios = async (req, res) => {
 export const createFuncionario = async (req, res) => {
     /*  #swagger.tags = ['Funcionario']
     #swagger.description = 'Endpoint to create funcionario.' */
-    const { chapa, nome, departamento, funcao, coligada, desligado, loja } = req.body;
+    const { chapa, cpf, nome, departamento, funcao, coligada, desligado, loja, dataAdmissao } = req.body;
 
     try {
         // Criação do funcionário
         const funcionario = await prisma.funcionario.create({
-            data: { chapa, nome, departamento, coligada, funcao, desligado, loja },
+            data: { chapa, cpf, nome, departamento, coligada, funcao, desligado, loja, dataAdmissao },
         });
 
         res.status(201).json(funcionario);
@@ -52,12 +54,12 @@ export const updateFuncionario = async (req, res) => {
     /*  #swagger.tags = ['Funcionario']
     #swagger.description = 'Endpoint to update funcionario.' */
     const { id } = req.params;
-    const { chapa, nome, departamento, cargo, coligada, loja } = req.body;
+    const { chapa, cpf, nome, departamento, cargo, coligada, loja, dataAdmissao, desligado } = req.body;
 
     try {
         const funcionario = await prisma.funcionario.update({
             where: { id: Number(id) },
-            data: { chapa, nome, departamento, cargo, coligada, loja },
+            data: { chapa, cpf, nome, departamento, cargo, coligada, loja, dataAdmissao, desligado },
         });
 
         res.json(funcionario);
