@@ -22,7 +22,6 @@ const UpdatePonto = () => {
     api.get('/funcionario').then(response => setFuncionarios(response.data));
     api.get(`/ponto/${id}`).then(response => {
       const p = response.data;
-      setUsuario(p.usuario);
       setDataInicio(p.dataInicio.substring(0, 16));
       setDataFim(p.dataFim.substring(0, 16));
       setIdFuncionario(p.idFuncionario);
@@ -55,18 +54,6 @@ const UpdatePonto = () => {
         <h1 className="text-center m-0">Atualizar Registro de Ponto</h1>
         <form onSubmit={handleUpdatePonto} aria-label="Formulário de atualização de ponto" className="mt-4">
           <div className="col-sm-6 mb-3">
-            <label htmlFor="usuario" className="form-label">Usuário:</label>
-            <input 
-              type="text" 
-              id="usuario" 
-              className="form-control"
-              value={usuario} 
-              onChange={e => setUsuario(e.target.value)} 
-              required 
-              placeholder="Digite o nome de usuário" 
-            />
-          </div>
-          <div className="col-sm-6 mb-3">
             <label htmlFor="dataInicio" className="form-label">Data Início:</label>
             <input 
               type="datetime-local" 
@@ -88,24 +75,8 @@ const UpdatePonto = () => {
               required 
             />
           </div>
-          <div className="col-sm-6 mb-3">
-            <label htmlFor="idFuncionario" className="form-label">Funcionário:</label>
-            <select 
-              id="idFuncionario" 
-              className="form-select"
-              value={idFuncionario} 
-              onChange={e => setIdFuncionario(Number(e.target.value))} 
-              required
-            >
-              <option value="">Selecione</option>
-              {funcionarios.map((f) => (
-                <option key={f.id} value={f.id}>{f.nome} - {f.chapa}</option>
-              ))}
-            </select>
-          </div>
           <div className="col-sm-12 d-flex gap-3">
             <button type="submit" className="btn btn-primary">Atualizar</button>
-            <button type="reset" className="btn btn-secondary">Limpar</button>
           </div>
         </form>
       </div>

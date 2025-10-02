@@ -172,14 +172,10 @@ const ListPonto: React.FC = () => {
                   <td>{new Date(p.dataInicio).toLocaleDateString()}</td>
                   <td>{new Date(p.dataFim).toLocaleDateString()}</td>
                   <td>
-                    <Link to={`/ponto/update/${p.id}`} className="btn btn-primary me-2">
-                      Atualizar
-                    </Link>
                     <button 
                       onClick={() => handleDeletePonto(p)} 
                       className="btn btn-danger"
-                      disabled={p.usuario !== usuarioLogado}
-                      title={p.usuario !== usuarioLogado ? "Apenas o usuário que criou pode excluir" : "Excluir ponto"}
+                      title={p.usuario !== usuarioLogado ? "Apenas o usuario que gerou a folha pode excluí-la" : "Excluir ponto"}
                     >
                       Excluir
                     </button>
